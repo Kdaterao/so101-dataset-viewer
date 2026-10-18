@@ -36,11 +36,16 @@ def episode_metadata(parts, needed, read):
 
 
 class DebugOverlayRenderer:
-    def __init__(self, records, sidecar_root):
+    def __init__(self, records, sidecar_root, *, show_masks=True, transition_seconds=None, fps=None):
         self.records = records
+        self.show_masks = show_masks
+        self.transition_frames = (max(0, round(transition_seconds * fps))
+                                  if transition_seconds is not None and fps is not None else None)
         self.masks = []
         seen = set()
         for record in records:
+            if not show_masks:
+                break
             info = record["pov"].get("gripper_filter", {})
             identity = (info.get("mask_file"), tuple(info.get("window", [])))
             if info.get("mask_file") and identity in seen:
@@ -93,14 +98,17 @@ class DebugOverlayRenderer:
                     continue
                 image[mask] = (0.6*image[mask]+0.4*np.array([255, 0, 255])).astype(np.uint8)
                 status = "mask: SAM2" if validity is None or validity[indices[frame]] else "mask: REJECTED / REVIEW"
-            if current["pov"].get("gripper_filter", {}).get("status") == "disabled":
+            if not self.show_masks:
+                status = ""
+            elif current["pov"].get("gripper_filter", {}).get("status") == "disabled":
                 status = "mask: disabled"
             result = current["pov"]
             previous = result.get("previous_stage", {})
         else:
             result = current.get("third_person", {}).get(camera, {})
             previous = result.get("transition_from_previous", {})
-        self._dots(image, previous, offset, (0, 255, 255))
+        if self.transition_frames is None or offset < self.transition_frames:
+            self._dots(image, previous, offset, (0, 255, 255))
         self._dots(image, result, offset, (0, 255, 0))
         text = f"DEBUG subtask {current['subtask']} {result.get('source', 'none')} {status}"
         cv2.putText(image, text, (8, 22), cv2.FONT_HERSHEY_SIMPLEX, .45, (0, 0, 0), 3)

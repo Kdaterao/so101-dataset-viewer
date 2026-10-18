@@ -2,8 +2,9 @@
 
 Standalone Streamlit viewer for `kdaterao/so101_spread73_v3_unified`.
 The page shows all source episode choices and top/wrist videos with revised
-captions that update at subtask boundaries. Saved SAM masks and grounding dots
-are rendered into preview videos. No GPU, inference models or robot101 checkout
+captions that update at subtask boundaries. Grounding dots are rendered into
+preview videos; cyan previous-interval dots show for 0.5 seconds. SAM masks are
+hidden by default. No GPU, inference models or robot101 checkout
 is required.
 
 ## Run locally
@@ -22,6 +23,10 @@ Optional dataset override:
 ```bash
 streamlit run app.py -- --repo-id kdaterao/so101_spread73_v3_unified
 ```
+
+Display options: `--transition-display-seconds 0.5` sets the cyan dot overlap
+duration; `--show-masks` restores SAM overlays. These affect previews only and
+never rewrite stored tracks. Already-baked debug video overlays cannot be removed.
 
 To inspect an existing local combined folder, use `-- --root /path/to/dataset`.
 No videos, model weights, dataset outputs or tokens belong in this repository.

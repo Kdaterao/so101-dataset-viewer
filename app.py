@@ -160,7 +160,12 @@ def main():
     inputs.add_argument("--root", help="Completed local combined dataset folder")
     inputs.add_argument("--repo-id", help="Combined Hugging Face dataset")
     parser.add_argument("--revision", default="main")
+    parser.add_argument("--transition-display-seconds", type=float, default=0.5,
+                        help="Display previous-interval cyan dots for this many seconds")
+    parser.add_argument("--show-masks", action="store_true", help="Show SAM masks (hidden by default)")
     args = parser.parse_args()
+    if not 0 <= args.transition_display_seconds < float("inf"):
+        parser.error("--transition-display-seconds must be finite and nonnegative")
     default_root = Path("outputs/so101_spread73_v3_unified")
     root = args.root or (str(default_root) if not args.repo_id and (default_root / "subtasks.jsonl").is_file() else "")
     repo = args.repo_id or os.environ.get("HF_DATASET_REPO", "kdaterao/so101_spread73_v3_unified")
@@ -199,6 +204,7 @@ def main():
             return
         renderer = None
         render_hash = hashlib.sha256(json.dumps(report, sort_keys=True).encode())
+        render_hash.update(f"{args.show_masks}:{args.transition_display_seconds}".encode())
         if not report.get("debug_overlays", False):
             import tempfile
             import shutil
@@ -206,7 +212,7 @@ def main():
                 copied = set()
                 for entry in report["subtasks"]:
                     info = entry.get("pov", {}).get("gripper_filter", {})
-                    if info.get("status") == "ok" and info.get("mask_file"):
+                    if args.show_masks and info.get("status") == "ok" and info.get("mask_file"):
                         if info['mask_file'] in copied:
                             continue
                         copied.add(info['mask_file'])
@@ -215,7 +221,10 @@ def main():
                         target.parent.mkdir(parents=True, exist_ok=True)
                         shutil.copy2(source, target)
                         render_hash.update(source.read_bytes())
-                renderer = DebugOverlayRenderer(report["subtasks"], Path(directory))
+                renderer = DebugOverlayRenderer(report["subtasks"], Path(directory),
+                    show_masks=args.show_masks, transition_seconds=args.transition_display_seconds, fps=fps)
+        if report.get("debug_overlays", False):
+            st.warning("This source video already contains overlays; baked-in masks and points cannot be removed by viewer settings.")
         chosen = [camera for camera in ("top", "wrist") if camera in cameras]
         if not chosen:
             chosen = list(cameras)[:2]
