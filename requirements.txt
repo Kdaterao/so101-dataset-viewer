@@ -1,0 +1,7 @@
+streamlit>=1.40,<2
+huggingface-hub>=0.34,<1
+av>=15,<17
+pandas>=2,<3
+pyarrow>=21,<30
+numpy>=1.26,<3
+opencv-python-headless>=4.8,<5
