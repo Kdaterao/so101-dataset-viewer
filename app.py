@@ -277,7 +277,11 @@ def main():
       </style>''')
     st.markdown('<h1 class="page-title">Robot101 Demonstration Viewer</h1>', unsafe_allow_html=True)
     st.write('Browse annotated SO-101 episodes with synchronized camera views and action captions.')
-    st.caption('Source demonstrations: [`felsager/community_dataset_v3_ee_smolVLA`](https://huggingface.co/datasets/felsager/community_dataset_v3_ee_smolVLA) · [See code here](https://github.com/Kdaterao/robot101)')
+    source_col, repo_col = st.columns([3, 1])
+    with source_col:
+        st.caption('Source demonstrations: `felsager/community_dataset_v3_ee_smolVLA`')
+    with repo_col:
+        st.link_button('GitHub repo', 'https://github.com/Kdaterao/robot101')
     st.divider()
 
     stat_columns = st.columns(3)
