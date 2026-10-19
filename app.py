@@ -270,25 +270,26 @@ def main():
     if not 0 <= args.transition_display_seconds < float('inf'):
         parser.error('--transition-display-seconds must be finite and nonnegative')
 
-    st.set_page_config(page_title='Robot101 | Dataset Viewer', page_icon='🤖', layout='centered')
+    st.set_page_config(page_title='SO-101 Auto-Annotation', page_icon='🤖', layout='centered')
     st.html('''<style>
       .page-title{font-size:40px;line-height:1.2;text-decoration:underline;text-decoration-color:#0F52BA;text-decoration-thickness:3px;text-underline-offset:7px;margin:0 0 14px}
+      .metric-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.65rem;margin:.25rem 0 .35rem}
+      .metric-item{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:.35rem;min-width:0;min-height:94px;padding:.75rem .9rem;border:1px solid #d8dee7;border-radius:8px;background:#fff}
+      .metric-value{color:#0F52BA;font-size:2rem;font-weight:650;line-height:1}
+      .metric-label{color:#536171;font-size:.78rem;line-height:1.25}
+      .metric-note{margin:0 0 .7rem;color:#687586;font-size:.72rem}
       @media(max-width:600px){.page-title{font-size:32px}}
+      @media(max-width:600px){.metric-strip{gap:.4rem}.metric-item{min-height:78px;padding:.55rem}.metric-value{font-size:1.5rem}.metric-label{font-size:.66rem}}
       </style>''')
-    st.markdown('<h1 class="page-title">Robot101 Demonstration Viewer</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="page-title">SO-101 Auto-Annotation</h1>', unsafe_allow_html=True)
     st.write('Browse annotated SO-101 episodes with synchronized camera views and action captions.')
     source_col, repo_col = st.columns([3, 1])
     with source_col:
         st.caption('Source demonstrations: `felsager/community_dataset_v3_ee_smolVLA`')
     with repo_col:
         st.link_button('GitHub repo', 'https://github.com/Kdaterao/robot101')
-    st.divider()
 
-    stat_columns = st.columns(3)
-    stat_columns[0].metric('Robot demonstrations', '50')
-    stat_columns[1].metric('Caption correctness', '~90%')
-    stat_columns[2].metric('Grounding correctness', '~80%')
-    st.caption('Correctness estimates are approximate and based on manual review.')
+    st.divider()
 
     demo_tab, explanation_tab = st.tabs(['Interactive Demo', 'Pipeline Explanation'])
     with demo_tab:
@@ -310,7 +311,8 @@ def main():
                 st.info('No episodes found in the dataset.')
             else:
                 multi=len({k[:2] for k in keys})>1
-                selected=st.selectbox('Source episode',keys,format_func=lambda k:f'Episode {k[2]}'+(f' · {k[0]}' if multi else ''))
+                default_key = next((key for key in keys if key[2] == 14), min(keys, key=lambda key: key[2]))
+                selected=st.selectbox('Source episode',keys,index=keys.index(default_key),format_func=lambda k:f'Episode {k[2]}'+(f' · {k[0]}' if multi else ''))
                 records=sorted([r for r in rows if (r['source_repo_id'],r['source_revision'],r['episode_index'])==selected],key=lambda r:r['start_frame'])
                 record=next((r for r in records if r.get('grounding_path') and r.get('grounding_dataset_path')),None)
                 if record is None:
@@ -374,6 +376,14 @@ def main():
                 st.exception(exc)
 
     with explanation_tab:
+        st.header('Project metrics')
+        st.html('''<div class="metric-strip" aria-label="Project metrics">
+          <div class="metric-item"><span class="metric-value">50</span><span class="metric-label">Robot demonstrations</span></div>
+          <div class="metric-item"><span class="metric-value">~90%</span><span class="metric-label">Caption correctness</span></div>
+          <div class="metric-item"><span class="metric-value">~80%</span><span class="metric-label">Grounding correctness</span></div>
+        </div>
+        <p class="metric-note">Correctness estimates are approximate and based on manual review.</p>''')
+        st.divider()
         st.header('How episodes are segmented, annotated, and grounded')
         st.write('The pipeline starts with the source robot videos and produces time-aligned captions and spatial points for each episode.')
         st.markdown('**Segment → Caption → Ground → Aggregate and export**')
