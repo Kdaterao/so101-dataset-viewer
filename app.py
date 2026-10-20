@@ -382,7 +382,7 @@ def main():
           <div class="metric-item"><span class="metric-value">~70%</span><span class="metric-label">Annotation accuracy</span></div>
           <div class="metric-item"><span class="metric-value">~90%</span><span class="metric-label">Grounding point accuracy</span></div>
         </div>
-        <p class="metric-note">Approximate estimates based on manual review of 18 episodes.</p>''')
+        <p class="metric-note">Approximate estimates based on manual review of 50 episodes.</p>''')
         st.divider()
         st.header('How episodes are segmented, annotated, and grounded')
         st.write('The pipeline starts with the source robot videos and produces time-aligned captions and spatial points for each episode.')
