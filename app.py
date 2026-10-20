@@ -311,7 +311,7 @@ def main():
                 st.info('No episodes found in the dataset.')
             else:
                 multi=len({k[:2] for k in keys})>1
-                default_key = next((key for key in keys if key[2] == 14), min(keys, key=lambda key: key[2]))
+                default_key = next((key for key in keys if key[2] == 12), min(keys, key=lambda key: key[2]))
                 selected=st.selectbox('Source episode',keys,index=keys.index(default_key),format_func=lambda k:f'Episode {k[2]}'+(f' · {k[0]}' if multi else ''))
                 records=sorted([r for r in rows if (r['source_repo_id'],r['source_revision'],r['episode_index'])==selected],key=lambda r:r['start_frame'])
                 record=next((r for r in records if r.get('grounding_path') and r.get('grounding_dataset_path')),None)
