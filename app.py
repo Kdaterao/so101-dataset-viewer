@@ -279,13 +279,13 @@ def main():
       .metric-label{color:#536171;font-size:.78rem;line-height:1.25}
       .metric-note{margin:0 0 .7rem;color:#687586;font-size:.72rem}
       @media(max-width:600px){.page-title{font-size:32px}}
-      @media(max-width:600px){.metric-strip{gap:.4rem}.metric-item{min-height:78px;padding:.55rem}.metric-value{font-size:1.5rem}.metric-label{font-size:.66rem}}
+      @media(max-width:600px){.metric-strip{grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem}.metric-item{min-height:78px;padding:.55rem}.metric-value{font-size:1.5rem}.metric-label{font-size:.66rem}}
       </style>''')
     st.markdown('<h1 class="page-title">SO-101 Auto-Annotation</h1>', unsafe_allow_html=True)
     st.write('Browse annotated SO-101 episodes with synchronized camera views and action captions.')
     source_col, repo_col = st.columns([3, 1])
     with source_col:
-        st.caption('Source demonstrations: `felsager/community_dataset_v3_ee_smolVLA`')
+        st.caption('Source demonstrations: [felsager/community_dataset_v3_ee_smolVLA](https://huggingface.co/datasets/felsager/community_dataset_v3_ee_smolVLA)')
     with repo_col:
         st.link_button('GitHub repo', 'https://github.com/Kdaterao/robot101')
 
@@ -379,10 +379,10 @@ def main():
         st.header('Project metrics')
         st.html('''<div class="metric-strip" aria-label="Project metrics">
           <div class="metric-item"><span class="metric-value">50</span><span class="metric-label">Robot demonstrations</span></div>
-          <div class="metric-item"><span class="metric-value">~90%</span><span class="metric-label">Caption correctness</span></div>
-          <div class="metric-item"><span class="metric-value">~80%</span><span class="metric-label">Grounding correctness</span></div>
+          <div class="metric-item"><span class="metric-value">~70%</span><span class="metric-label">Annotation accuracy</span></div>
+          <div class="metric-item"><span class="metric-value">~90%</span><span class="metric-label">Grounding point accuracy</span></div>
         </div>
-        <p class="metric-note">Correctness estimates are approximate and based on manual review.</p>''')
+        <p class="metric-note">Approximate estimates based on manual review of 18 episodes.</p>''')
         st.divider()
         st.header('How episodes are segmented, annotated, and grounded')
         st.write('The pipeline starts with the source robot videos and produces time-aligned captions and spatial points for each episode.')
