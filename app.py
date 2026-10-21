@@ -287,7 +287,7 @@ def main():
     with source_col:
         st.caption('Source demonstrations: [felsager/community_dataset_v3_ee_smolVLA](https://huggingface.co/datasets/felsager/community_dataset_v3_ee_smolVLA)')
     with repo_col:
-        st.link_button('GitHub repo', 'https://github.com/Kdaterao/robot101')
+        st.link_button('GitHub repo', 'https://github.com/Kdaterao/so101-auto-annotation')
 
     st.divider()
 
