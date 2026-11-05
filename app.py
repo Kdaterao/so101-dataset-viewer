@@ -131,7 +131,7 @@ def episode_player(clips, records, fps, selected_start=0):
 
     timeline = [
         {"start": int(r["start_frame"]), "end": int(r["end_frame"]),
-         "caption": r.get("detailed_caption") or r.get("brief_caption") or "No annotation available"}
+         "caption": r.get("brief_caption") or "No annotation available"}
         for r in records
     ]
     sources = [{"name": camera, "src": "data:video/mp4;base64," + base64.b64encode(clip).decode("ascii")}
